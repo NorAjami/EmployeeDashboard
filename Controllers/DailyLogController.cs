@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
 using EmployeeDashboard.Models;
+using EmployeeDashboard.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeDashboard.Controllers
 {
@@ -7,33 +8,32 @@ namespace EmployeeDashboard.Controllers
     [Route("api/[controller]")]
     public class DailyLogController : ControllerBase
     {
-        // Tillfällig in-memory lista
-        private static readonly List<DailyLog> Logs = new();
+        private readonly MongoDailyLogService _logService;
 
-        // POST: /api/dailylog
-        [HttpPost]
-        public ActionResult<DailyLog> AddLog(DailyLog log)
+        public DailyLogController(MongoDailyLogService logService)
         {
-            Logs.Add(log);
-            return CreatedAtAction(nameof(GetLogById), new { id = log.Id }, log);
+            _logService = logService;
         }
 
-        // GET: /api/dailylog
         [HttpGet]
-        public ActionResult<IEnumerable<DailyLog>> GetAllLogs()
+        public async Task<ActionResult<IEnumerable<DailyLog>>> GetAll()
         {
-            return Ok(Logs.OrderByDescending(l => l.Date));
+            var logs = await _logService.GetAllAsync();
+            return Ok(logs);
         }
 
-        // GET: /api/dailylog/{id}
         [HttpGet("{id}")]
-        public ActionResult<DailyLog> GetLogById(Guid id)
+        public async Task<ActionResult<DailyLog>> GetById(Guid id)
         {
-            var log = Logs.FirstOrDefault(l => l.Id == id);
-            if (log == null)
-                return NotFound($"No log found with id: {id}");
+            var log = await _logService.GetByIdAsync(id);
+            return log is null ? NotFound() : Ok(log);
+        }
 
-            return Ok(log);
+        [HttpPost]
+        public async Task<ActionResult<DailyLog>> Add(DailyLog log)
+        {
+            await _logService.AddAsync(log);
+            return CreatedAtAction(nameof(GetById), new { id = log.Id }, log);
         }
     }
 }

@@ -6,6 +6,7 @@ builder.Services.AddControllers();
 // Lägg till Swagger för att testa API:et
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<MongoDailyLogService>();
 
 var app = builder.Build();
 
