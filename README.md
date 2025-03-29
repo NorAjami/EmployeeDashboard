@@ -1,85 +1,108 @@
-# 🧠👥 EmployeeDashboard
+# 🧠 EmployeeDashboard
 
-An internal system for employees to:
+A clean, cloud-ready internal system for employees to:
 
-- 🧘‍♂️ View Quote of the Day
+- ✨ View Quote of the Day
 - 📝 Write Daily Logs
 - ✅ Track Tasks
 - 📢 Read Announcements
 
-A professional, cloud-ready Employee Dashboard built with ASP.NET Core Razor Pages and MongoDB.  
-This application is designed to help employees log their daily work activities in a clean and structured way.
+Built with **ASP.NET Core Razor Pages** and **MongoDB Atlas**, this dashboard helps employees reflect, stay organized, and keep track of important updates.
 
 ---
 
-## 📌 Features
-
-- ✅ Create daily work logs via a simple form
-- ✅ View recent logs in a clean, dark-themed dashboard
-- ✅ Store data in MongoDB Atlas (cloud)
-- ✅ Ready for GitHub Actions, Docker, and Azure deployment
-
----
-
-## ⚙️ Technologies Used
+## 🔧 Tech Stack
 
 - ASP.NET Core 8 (Razor Pages)
-- MongoDB Atlas (Cloud Database)
-- Git & GitHub
-- Visual Studio Code
-- GitHub Actions (CI/CD ready)
-- Docker (optional containerization)
-- Azure (optional deployment)
+- MongoDB Atlas (Cloud NoSQL)
+- GitHub & GitHub Actions
+- Docker (optional)
+- Azure App Service (planned)
 
 ---
 
-## 🗂 Project Structure
+## 📁 Project Structure
 
+```
 EmployeeDashboard/
-│
-├── Models/ # DailyLog model (MongoDB-friendly)
-├── Services/ # MongoDB service layer
-├── Pages/ # Razor Pages frontend
-│
-├── Shared/ # Layout and shared views
-│
-└── Index.cshtml # Main dashboard page
-├── appsettings.json # Configuration incl. MongoDB
-├── Program.cs # App entrypoint
-└── README.md # Project overview
+├── Models/
+├── Services/
+├── Pages/
+├── wwwroot/
+├── appsettings.json
+├── Program.cs
+└── README.md
+```
 
 ---
 
 ## 🚀 Getting Started
 
-1. Clone the repository:
+1. **Clone the repository:**
 
+```bash
 git clone https://github.com/NorAjami/EmployeeDashboard.git
 cd EmployeeDashboard
+```
 
-2. Add your MongoDB connection string using secrets:
-dotnet user-secrets init dotnet user-secrets set "MongoDB:ConnectionString" "<your-connection-string>"
+2. **Add your MongoDB connection string as a secret:**
 
-3. Run the app:
+```bash
+dotnet user-secrets init
+dotnet user-secrets set "MongoDB:ConnectionString" "<your-connection-string>"
+```
+
+3. **Run the project locally:**
+
+```bash
 dotnet run
+```
 
-4. Visit `http://localhost:xxxx` and log your day!
+4. **Open in browser:**
+
+```
+http://localhost:xxxx
+```
 
 ---
 
-## 💡 Future Plans
+## ✅ Features Implemented
 
-- GitHub Actions integration
-- Docker support
-- Azure App Service deployment
-- Authentication (optional)
+- Create and store daily work logs
+- View daily logs on a dashboard
+- Quotes of the day
+- Responsive UI using Razor Pages
+- MongoDB Atlas integration for persistent data
+- Dark mode design
+
+---
+
+## 🔮 Roadmap
+
+- Add task tracking module
+- Add announcement creation/editing for admins
+- Implement authentication and user roles
+- Add GitHub Actions CI/CD pipeline
+- Deploy to Azure App Service
+- Add Docker support for containerization
 
 ---
 
 ## 📸 Screenshots
 
-Coming soon...
+*Add your screenshots in a ****`/screenshots`**** folder and reference them here.*
 
 ---
 
-Built with ❤️ by [NorAjami](https://github.com/NorAjami)
+## 👩‍💻 Author
+
+Made with ❤️ by [@NorAjami](https://github.com/NorAjami)
+
+---
+
+## 💡 Tips
+
+- Use `dotnet user-secrets list` to confirm your secret is set.
+- MongoDB Atlas requires a cluster, user, and IP whitelist.
+- When deploying, secrets should be added to GitHub or Azure environment variables.
+
