@@ -1,6 +1,6 @@
-using MongoDB.Bson;
-using MongoDB.Driver;
 using EmployeeDashboard.Models;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace EmployeeDashboard.Services
 {
@@ -8,15 +8,12 @@ namespace EmployeeDashboard.Services
     {
         private readonly IMongoCollection<DailyLog> _collection;
 
-        public MongoDailyLogService(IConfiguration config)
+        public MongoDailyLogService(IOptions<MongoDbSettings> settings)
         {
-            var connectionString = config["MongoDB:ConnectionString"];
-            var dbName = config["MongoDB:DatabaseName"];
-            var collectionName = config["MongoDB:CollectionName"];
-           
-            var client = new MongoClient(connectionString); // ✅ Inget extra behövs!
-            var database = client.GetDatabase(dbName);
-            _collection = database.GetCollection<DailyLog>(collectionName);
+            var config = settings.Value;
+            var client = new MongoClient(config.ConnectionString);
+            var database = client.GetDatabase(config.DatabaseName);
+            _collection = database.GetCollection<DailyLog>(config.CollectionName);
         }
 
         public async Task<List<DailyLog>> GetAllAsync()
@@ -24,16 +21,19 @@ namespace EmployeeDashboard.Services
             return await _collection.Find(_ => true).ToListAsync();
         }
 
-        public async Task<DailyLog?> GetByIdAsync(Guid id)
+        public async Task<DailyLog?> GetByIdAsync(string id)
         {
-            return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
+            return await _collection.Find(log => log.Id == Guid.Parse(id)).FirstOrDefaultAsync();
         }
 
         public async Task AddAsync(DailyLog log)
         {
-            Console.WriteLine("👉 AddAsync körs – försöker spara i MongoDB...");
             await _collection.InsertOneAsync(log);
         }
 
+        public async Task DeleteAsync(string id)
+        {
+            await _collection.DeleteOneAsync(log => log.Id == Guid.Parse(id));
+        }
     }
 }
