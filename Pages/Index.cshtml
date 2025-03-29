@@ -1,0 +1,30 @@
+@page
+@model EmployeeDashboard.Pages.IndexModel
+@{
+    ViewData["Title"] = "Employee Dashboard";
+}
+
+<h1>📝 Daily Logs</h1>
+
+<form method="post">
+    <input asp-for="Author" placeholder="Your name" required />
+    <textarea asp-for="ContentText" rows="4" placeholder="What did you work on today?" required></textarea>
+    <button type="submit">Submit Log</button>
+</form>
+
+<h2>📅 Recent Logs</h2>
+
+@if (Model.Logs != null && Model.Logs.Any())
+{
+    foreach (var log in Model.Logs)
+    {
+        <div class="log-entry">
+            <strong>@log.Author</strong> - <em>@log.Date.ToShortDateString()</em>
+            <p>@log.Content</p>
+        </div>
+    }
+}
+else
+{
+    <p>No logs yet.</p>
+}

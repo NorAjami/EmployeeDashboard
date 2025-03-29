@@ -1,6 +1,6 @@
-using EmployeeDashboard.Models;
-using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using EmployeeDashboard.Models;
 
 namespace EmployeeDashboard.Services
 {
@@ -10,12 +10,11 @@ namespace EmployeeDashboard.Services
 
         public MongoDailyLogService(IConfiguration config)
         {
-            // Läser från appsettings + secrets
             var connectionString = config["MongoDB:ConnectionString"];
             var dbName = config["MongoDB:DatabaseName"];
             var collectionName = config["MongoDB:CollectionName"];
-
-            var client = new MongoClient(connectionString);
+           
+            var client = new MongoClient(connectionString); // ✅ Inget extra behövs!
             var database = client.GetDatabase(dbName);
             _collection = database.GetCollection<DailyLog>(collectionName);
         }
@@ -27,12 +26,14 @@ namespace EmployeeDashboard.Services
 
         public async Task<DailyLog?> GetByIdAsync(Guid id)
         {
-            return await _collection.Find(l => l.Id == id).FirstOrDefaultAsync();
+            return await _collection.Find(x => x.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task AddAsync(DailyLog log)
         {
+            Console.WriteLine("👉 AddAsync körs – försöker spara i MongoDB...");
             await _collection.InsertOneAsync(log);
         }
+
     }
 }

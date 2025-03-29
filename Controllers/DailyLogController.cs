@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
 using EmployeeDashboard.Models;
 using EmployeeDashboard.Services;
-using Microsoft.AspNetCore.Mvc;
+using EmployeeDashboard.Controllers;
+
 
 namespace EmployeeDashboard.Controllers
 {
@@ -8,32 +10,45 @@ namespace EmployeeDashboard.Controllers
     [Route("api/[controller]")]
     public class DailyLogController : ControllerBase
     {
-        private readonly MongoDailyLogService _logService;
 
-        public DailyLogController(MongoDailyLogService logService)
-        {
-            _logService = logService;
-        }
+        private readonly MongoDailyLogService _service;
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<DailyLog>>> GetAll()
-        {
-            var logs = await _logService.GetAllAsync();
-            return Ok(logs);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<DailyLog>> GetById(Guid id)
-        {
-            var log = await _logService.GetByIdAsync(id);
-            return log is null ? NotFound() : Ok(log);
-        }
+        // Tillfällig in-memory lista
+        private static readonly List<DailyLog> Logs = new();
 
         [HttpPost]
-        public async Task<ActionResult<DailyLog>> Add(DailyLog log)
+        public async Task<IActionResult> Add([FromBody] DailyLog log)
         {
-            await _logService.AddAsync(log);
-            return CreatedAtAction(nameof(GetById), new { id = log.Id }, log);
+           
+            await _service.AddAsync(log);
+            return Ok(log); // 👈 enklare tills vi har GetById 
+        }
+
+
+        // POST: /api/dailylog
+        [HttpPost]
+        public ActionResult<DailyLog> AddLog(DailyLog log)
+        {
+            Logs.Add(log);
+            return CreatedAtAction(nameof(GetLogById), new { id = log.Id }, log);
+        }
+
+        // GET: /api/dailylog
+        [HttpGet]
+        public ActionResult<IEnumerable<DailyLog>> GetAllLogs()
+        {
+            return Ok(Logs.OrderByDescending(l => l.Date));
+        }
+
+        // GET: /api/dailylog/{id}
+        [HttpGet("{id}")]
+        public ActionResult<DailyLog> GetLogById(Guid id)
+        {
+            var log = Logs.FirstOrDefault(l => l.Id == id);
+            if (log == null)
+                return NotFound($"No log found with id: {id}");
+
+            return Ok(log);
         }
     }
 }
